@@ -33,3 +33,27 @@ SELECT strftime('%Y', date(date_added)) as year, COUNT(*) as count
 FROM netflix_titles 
 GROUP BY year 
 ORDER BY year;
+
+
+-- Selecting all TV shows
+SELECT * FROM netflix_titles WHERE type = 'TV Show';
+
+-- Counting the number of TV shows by rating
+SELECT rating, COUNT(*) as count FROM netflix_titles WHERE type = 'TV Show' GROUP BY rating;
+
+-- Finding the average number of seasons for TV shows
+SELECT AVG(CAST(SUBSTR(duration, 1, LENGTH(duration)-8) AS INTEGER)) as avg_seasons 
+FROM netflix_titles 
+WHERE type = 'TV Show';
+
+-- Finding the top 5 TV shows with the most seasons
+SELECT title, duration FROM netflix_titles WHERE type = 'TV Show' ORDER BY CAST(SUBSTR(duration, 1, LENGTH(duration)-8) AS INTEGER) DESC LIMIT 5;
+
+-- Removing duplicate titles based on title and type
+DELETE FROM netflix_titles
+WHERE rowid NOT IN (
+    SELECT MIN(rowid)
+    FROM netflix_titles
+    GROUP BY title, type
+);
+
